@@ -50,10 +50,11 @@
                     <th scope="col">Id</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Poliza</th>
-                    <th scope="col">Fecha</th>
+                    <th scope="col">Fecha de Vencimiento</th>
                     <th scope="col">Contacto</th>
                     <th scope="col">Cantidad de Pagos</th>
                     <th scope="col">Progreso</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -65,6 +66,7 @@
                     <td>111111</td>
                     <td>3</td>
                     <td>80%</td>
+                    <td><button type="button" class="btn btn-danger">eliminar</button></td>
                 </tr>
 
             </tbody>
@@ -76,7 +78,6 @@
             <p>&copy; 2023 made by <a href="https://github.com/ManuNunez">Manuel Nuñez</a></p>
         </div>
     </footer>
-
 
     <div class="modal fade" id="agregarModal" tabindex="-1" role="dialog" aria-labelledby="agregarModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -91,27 +92,44 @@
                     <form>
                         <div class="form-group">
                             <label for="nombre">Nombre : </label>
-                            <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre">
+                            <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre" required>
                         </div>
                         <div class="form-group">
                             <label for="phone">Teléfono:</label>
-                            <input type="text" class="form-control" id="phone" name="phone" required>
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Numero de telefono" required>
                         </div>
                         <div class="form-group">
                             <label for="poliza">Poliza : </label>
-                            <input type="text" class="form-control" id="poliza" placeholder="Ingrese la poliza">
+                            <input type="text" class="form-control" id="poliza" placeholder="Ingrese la poliza" required>
                         </div>
                         <div class="form-group">
                             <label for="fecha">Fecha de Vencimiento : </label>
-                            <input type="date" class="form-control" id="fecha" placeholder="Ingrese la fecha">
+                            <input type="date" class="form-control" id="fecha" placeholder="Ingrese la fecha" required>
                         </div>
                         <div class="form-group">
                             <label for="tipoPago">Tipo de Pago : </label>
                             <select class="form-control" id="tipoPago">
+                                <option value="default" selected>Seleccione una opción</option>
                                 <option value="anual">Anual</option>
                                 <option value="trimestral">Trimestral</option>
                                 <option value="semestral">Semestral</option>
                             </select>
+                        </div>
+                        <div class="form-group pago" id="pago1">
+                            <label for="pago1">Pago 1:</label>
+                            <input type="text" class="form-control" id="pago1" placeholder="Ingrese el pago 1">
+                        </div>
+                        <div class="form-group pago" id="pago2">
+                            <label for="pago2">Pago 2:</label>
+                            <input type="text" class="form-control" id="pago2" placeholder="Ingrese el pago 2">
+                        </div>
+                        <div class="form-group pago" id="pago3">
+                            <label for="pago3">Pago 3:</label>
+                            <input type="text" class="form-control" id="pago3" placeholder="Ingrese el pago 3">
+                        </div>
+                        <div class="form-group pago" id="pago4">
+                            <label for="pago4">Pago 4:</label>
+                            <input type="text" class="form-control" id="pago4" placeholder="Ingrese el pago 4">
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>
@@ -119,6 +137,7 @@
             </div>
         </div>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

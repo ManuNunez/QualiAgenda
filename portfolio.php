@@ -1,6 +1,35 @@
 <?php
+$jsonData = file_get_contents("sources/db/polices.json");
+$clientes = json_decode($jsonData, true);
 
+if ($clientes && isset($clientes['clientes'])) {
+    $clientes = $clientes['clientes'];
+} else {
+    $clientes = [];
+}
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['nombre']) && isset($_POST['poliza']) && isset($_POST['proximoPago'])) {
+        $jsonData = file_get_contents("sources/db/polices.json");
+        $clientes = json_decode($jsonData, true);
+
+        $nuevoCliente = [
+            'id' => count($clientes['clientes']) + 1,
+            'nombre' => $_POST['nombre'],
+            'poliza' => $_POST['poliza'],
+            'proximoPago' => $_POST['proximoPago'],
+        ];
+
+        $clientes['clientes'][] = $nuevoCliente;
+
+        $jsonData = json_encode($clientes, JSON_PRETTY_PRINT);
+        file_put_contents("sources/db/polices.json", $jsonData);
+
+        // Redirigir a index.php después de guardar
+        header("Location: index.php");
+        exit(); // Asegurar que el script se detenga después de la redirección
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -42,14 +71,21 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-6">
-                <input type="text" class="form-control" placeholder="Buscar">
+                <form method="get" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar por número de póliza" name="search">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="col-md-6 text-md-right">
                 <button class="btn btn-success" id="agregarBtn" data-toggle="modal" data-target="#agregarModal">Agregar</button>
             </div>
         </div>
         <br><br><br>
-        <table class="table mt-4">
+        <table class="table mt-4" id="clientesTabla">
             <thead>
                 <tr>
                     <th scope="col">Id</th>
@@ -60,14 +96,24 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Poliza1</td>
-                    <td>Nombre1</td>
-                    <td>PróximoPago1</td>
-                    <td><button type="button" class="btn btn-danger">eliminar</button></td>
-                </tr>
-                <!-- Puedes agregar más filas según tus necesidades -->
+                <?php
+                $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+
+                foreach ($clientes as $cliente) {
+                    // Verifica si el número de póliza contiene el término de búsqueda
+                    if (stripos($cliente['poliza'], $searchTerm) !== false || empty($searchTerm)) {
+                        ?>
+                        <tr>
+                            <th scope="row"><?php echo $cliente['id']; ?></th>
+                            <td><?php echo $cliente['poliza']; ?></td>
+                            <td><?php echo $cliente['nombre']; ?></td>
+                            <td><?php echo $cliente['proximoPago']; ?></td>
+                            <td><button type="button" class="btn btn-danger">eliminar</button></td>
+                        </tr>
+                        <?php
+                    }
+                }
+                ?>
             </tbody>
         </table>
     </div>
@@ -79,40 +125,38 @@
     </footer>
 
     <div class="modal fade" id="agregarModal" tabindex="-1" role="dialog" aria-labelledby="agregarModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="agregarModalLabel">Agregar Nuevo Cliente</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <!-- Eliminado el campo de ID -->
-                    <div class="form-group">
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="poliza">Número de Póliza:</label>
-                        <input type="text" class="form-control" id="poliza" placeholder="Ingrese el número de póliza" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="proximoPago">Próximo Pago:</label>
-                        <input type="date" class="form-control" id="proximoPago" placeholder="Ingrese la fecha del próximo pago" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </form>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarModalLabel">Agregar Nuevo Cliente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingrese el nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="poliza">Número de Póliza:</label>
+                            <input type="text" class="form-control" id="poliza" name="poliza" placeholder="Ingrese el número de póliza" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="proximoPago">Próximo Pago:</label>
+                            <input type="date" class="form-control" id="proximoPago" name="proximoPago" placeholder="Ingrese la fecha del próximo pago" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="sources/scripts/new_client.js"></script>
 
 </body>
 
